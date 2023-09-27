@@ -1,0 +1,5 @@
+CREATE OR REPLACE FUNCTION keepcoding.clean_integer(x INT64)
+RETURNS INT64
+AS (
+    IFNULL(x,-999999)
+);
