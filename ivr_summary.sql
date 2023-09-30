@@ -10,10 +10,10 @@ WITH
   documents
   AS (SELECT
           detail.calls_ivr_id as ivr_id
-        , COALESCE(NULLIF(detail.document_type,"NULL"),NULLIF(steps.document_type,"NULL")) AS document_type
-        , COALESCE(NULLIF(detail.document_identification,"NULL"),NULLIF(steps.document_identification,"NULL")) AS document_identification
-        , COALESCE(NULLIF(detail.customer_phone, "NULL"), NULLIF(steps.customer_phone, "NULL")) AS customer_phone
-        , COALESCE(NULLIF(detail.billing_account_id, "NULL"), NULLIF(steps.billing_account_id, "NULL")) AS billing_account
+        , NULLIF(detail.document_type,"NULL") AS document_type
+        , NULLIF(detail.document_identification,"NULL") AS document_identification
+        , NULLIF(detail.customer_phone, "NULL") AS customer_phone
+        , NULLIF(detail.billing_account_id, "NULL") AS billing_account
       FROM keepcoding.ivr_detail detail
       LEFT
         JOIN keepcoding.ivr_steps steps
