@@ -36,7 +36,7 @@ WITH
         , count(*) AS info_by_phone
       FROM keepcoding.ivr_detail
       WHERE 
-            step_name = "CUSTOMERINFOBYPHONE.TX"
+          step_name = "CUSTOMERINFOBYPHONE.TX"
         AND step_description_error = "NULL"
       GROUP BY calls_ivr_id,step_name,step_description_error)
   ,
@@ -46,31 +46,31 @@ WITH
         , count(*) AS info_by_dni
       FROM keepcoding.ivr_detail
       WHERE 
-            step_name = "CUSTOMERINFOBYDNI.TX"
+          step_name = "CUSTOMERINFOBYDNI.TX"
         AND step_description_error = "NULL"
       GROUP BY calls_ivr_id,step_name,step_description_error)
 
 SELECT 
     detail.calls_ivr_id
-  , calls_phone_number
-  , calls_ivr_result
-  , CASE WHEN STARTS_WITH(calls_vdn_label, "ATC") THEN "FRONT"
-         WHEN STARTS_WITH(calls_vdn_label, "TECH") THEN "TECH"
-         WHEN calls_vdn_label = "ABSORPTION" THEN "ABSORPTION"
+  , detail.calls_phone_number
+  , detail.calls_ivr_result
+  , CASE WHEN STARTS_WITH(detail.calls_vdn_label, "ATC") THEN "FRONT"
+         WHEN STARTS_WITH(detail.calls_vdn_label, "TECH") THEN "TECH"
+         WHEN detail.calls_vdn_label = "ABSORPTION" THEN "ABSORPTION"
     ELSE "RESTO"
     END AS calls_vdn_aggregation
-  , calls_start_date
-  , calls_end_date
-  , calls_total_duration
-  , calls_customer_segment
-  , calls_ivr_language
-  , calls_steps_module
-  , calls_module_aggregation
+  , detail.calls_start_date
+  , detail.calls_end_date
+  , detail.calls_total_duration
+  , detail.calls_customer_segment
+  , detail.calls_ivr_language
+  , detail.calls_steps_module
+  , detail.calls_module_aggregation
   , documents.document_type
   , documents.document_identification
   , documents.customer_phone
   , documents.billing_account
-  , IF(CONTAINS_SUBSTR(calls_module_aggregation, "AVERIA_MASIVA"), 1, 0) AS masiva_lg
+  , IF(CONTAINS_SUBSTR(detail.calls_module_aggregation, "AVERIA_MASIVA"), 1, 0) AS masiva_lg
   , COALESCE(info_by_phone.info_by_phone, 0) as info_by_phone_lg
   , COALESCE(info_by_dni.info_by_dni, 0) as  info_by_dni_lg
   , IF(DATETIME_DIFF(detail.calls_start_date, calls.llamada_previa,HOUR)<24,1,0) AS repeated_phone_24H
@@ -96,5 +96,4 @@ QUALIFY ROW_NUMBER()
     PARTITION BY CAST(detail.calls_ivr_id AS STRING) 
     ORDER BY detail.calls_ivr_id,detail.calls_start_date DESC
   ) = 1
-
 
