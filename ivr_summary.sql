@@ -15,9 +15,6 @@ WITH
         , NULLIF(detail.customer_phone, "NULL") AS customer_phone
         , NULLIF(detail.billing_account_id, "NULL") AS billing_account
       FROM keepcoding.ivr_detail detail
-      LEFT
-        JOIN keepcoding.ivr_steps steps
-        ON steps.ivr_id = detail.calls_ivr_id
       GROUP BY 
           calls_ivr_id
         , document_type
@@ -96,4 +93,3 @@ QUALIFY ROW_NUMBER()
     PARTITION BY CAST(detail.calls_ivr_id AS STRING) 
     ORDER BY detail.calls_ivr_id,detail.calls_start_date DESC
   ) = 1
-
